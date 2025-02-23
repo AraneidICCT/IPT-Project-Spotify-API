@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ user_name }}'s Top Tracks</title>
+    <style>
+        /* General page styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #15202B;
+            color: white;
+            text-align: center;
+        }
+
+        /* Container for the content */
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #1DA1F2;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        /* Styling for dropdown and button */
+        select, button {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+            background-color: #1B95E0;
+            border: none;
+            border-radius: 5px;
+            color: white;
+        }
+
+        /* Styling for the list of tracks */
+        ul {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+        }
+
+        /* Styling for each track item */
+        li {
+            background: #192734;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+        }
+
+        /* Ensure text wraps properly in the track list */
+        li .track-info, .top-track-text {
+            flex-grow: 1;
+            text-align: center;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 60%;
+        }
+
+        /* Rank number styling */
+        li span.rank {
+            width: 30px;
+            text-align: left;
+        }
+
+        /* Spotify link button styling */
+        .spotify-link {
+            text-decoration: none;
+            color: white;
+            background-color: #1B95E0;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        /* Hover effect for Spotify link button */
+        .spotify-link:hover {
+            background-color: #1991DA;
+        }
+
+        /* Styling for the top track image and text */
+        .top-track {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .top-track img {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+        }
+        .top-track-text {
+            font-size: 28px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Display the user's Spotify name in the page title -->
+    <h1>{{ user_name }}'s Top Spotify Tracks</h1>
+    <div class="container">
+        <!-- Form to select the time range for top tracks -->
+        <form method="POST">
+            <label for="time_range">Select Time Range:</label>
+            <select name="time_range" id="time_range">
+                {% for key, label in time_ranges.items() %}
+                    <option value="{{ key }}" {% if key == selected_range %}selected{% endif %}>
+                        Last {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+            <button type="submit">Show Tracks</button>
+        </form>
+
+        {% if top_tracks %}
+            <!-- Display the selected time range for top tracks -->
+            <h2>Top Tracks in the last {{ time_ranges[selected_range] }}</h2>
+
+            <!-- Display the image and name of the number 1 track -->
+            <div class="top-track">
+                <img src="{{ top_tracks[0].image_url }}" alt="{{ top_tracks[0].name }} Cover">
+                <span class="top-track-text">Number 1 Song:<br>{{ top_tracks[0].name }}</span>
+            </div>
+
+            <ul>
+                {% for track in top_tracks %}
+                    <li>
+                        <!-- Display track rank number -->
+                        <span class="rank">{{ loop.index }}.</span>
+
+                        <!-- Display track name and artist(s) -->
+                        <span class="track-info">{{ track.name }} - {{ track.artists }}</span>
+
+                        <!-- Link to play the track on Spotify -->
+                        <a class="spotify-link" href="{{ track.spotify_url }}" target="_blank">Open in Spotify</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</body>
+</html>
